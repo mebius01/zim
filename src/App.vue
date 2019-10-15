@@ -1,13 +1,54 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <header>
+      <h1> <a href="/">Vue.js SPA</a> </h1>
+    </header>
+    <hr>
+    <main>
+      <aside class="sidebar">
+        <router-link
+          v-for="post in posts"
+          active-class="is-active"
+          class="link"
+          :to="{ name: 'post', params: { id: post.id } }">
+          {{post.id}}. {{post.title}}
+        </router-link>
+      </aside>
+      <div class="content">
+        <router-view></router-view>
+      </div>
+    </main>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
-  name: 'App'
+  data () {
+    return {
+      posts: null,
+      endpoint: 'https://jsonplaceholder.typicode.com/posts/',
+    }
+  },
+
+
+
+  created() {
+    this.getAllPosts();
+  },
+
+  methods: {
+    getAllPosts() {
+      axios.get(this.endpoint)
+      .then(response => {
+        this.posts = response.data;
+      })
+      .catch(error => {
+        console.log('-----error-------');
+        console.log(error);
+      })
+    }
+  }
 }
 </script>
 
@@ -18,6 +59,48 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
+/* main {
+  display: grid;
+  grid-template-columns: 30% auto;
+} */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    min-height: 90px;
+    border-bottom: 1px solid #42b983;
+    text-align: center;
+    background: #ffffff;
+  }
+  main {
+    display: flex;
+    height: calc(100vh - 90px);
+    max-width: 1200px;
+    margin-top: 90px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+  }
+   .content {
+    flex: 1 1 70%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  aside {
+    flex: 1 0 30%;
+    height: 100%;
+    overflow-y: auto;
+    width: 30%;
+    padding: 50px 30px;
+    box-sizing: border-box;
+    border-right: 1px solid #42b983;
+  }
+  .link, a{
+    display: block;
+    text-decoration: none;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
 </style>
